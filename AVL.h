@@ -85,7 +85,6 @@ void byID(AVL*& root, Book data) // so sanh ID
     }
 }
 
-
 void insertAVL(AVL*& root, Book data)
 {
     byID(root, data);
@@ -168,13 +167,12 @@ AVL* readFileAVL(string info)
                 book.summary = temp;
         }
         else
-             book.summary = temp;
+            book.summary = temp;
 
         getline(ss, temp, ',');
         if (temp[0] == '"')
         {
-            char tempo = temp[temp.length() - 1];
-            while ((temp[temp.length() - 1] != '"')||(temp==""))
+            while ((temp[temp.length() - 1] != '"') || (temp == ""))
             {
                 book.text = temp + ',';
                 getline(ss, temp, ',');
@@ -195,13 +193,11 @@ AVL* readFileAVL(string info)
     fi.close();
     return root;
 }
-
-void writeFile(string info, AVL* root)
+void LNR(ofstream& fo, AVL* root)
 {
     if (root == NULL)
         return;
-    writeFile(info, root->left);
-    ofstream fo(info);
+    LNR(fo, root->left);
     fo << root->book.id << ","
         << root->book.title << ","
         << root->book.price << ","
@@ -211,7 +207,14 @@ void writeFile(string info, AVL* root)
         << root->book.score << ","
         << root->book.time << ","
         << root->book.summary << ","
-        << root->book.text << ","<< endl<<endl;
+        << root->book.text << "," << endl << endl;
+    LNR(fo, root->right);
+}
+void writeFile(string info, AVL* root)
+{
+    ofstream fo(info);
+    if (root == NULL)
+        return;
+    LNR(fo, root);
     fo.close();
-    writeFile(info, root->right);
 }
