@@ -55,16 +55,7 @@ void balance(AVL*& root)
 AVL* createNodeAVL(Book data)
 {
     AVL* p = new AVL;
-    p->book.id = data.id;
-    p->book.title = data.title;
-    p->book.user_id = data.user_id;
-    p->book.profileName = data.profileName;
-    p->book.summary = data.summary;
-    p->book.text = data.text;
-    p->book.time = data.time;
-    p->book.price = data.price;
-    p->book.helpfulness = data.helpfulness;
-    p->book.score = data.score;
+    p->book.push_back(data);
     p->left = NULL;
     p->right = NULL;
     return p;
@@ -75,146 +66,166 @@ void byID(AVL*& root, Book data) // so sanh ID
     {
         root = createNodeAVL(data);
     }
-    else if (data.id <= root->book.id)
+    else if (data.id < root->book[0].id)
     {
         byID(root->left, data);
     }
-    else if (data.id > root->book.id)
+    else if (data.id == root->book[0].id)
+    {
+        root->book.push_back(data);
+    }
+    else if (data.id > root->book[0].id)
     {
         byID(root->right, data);
     }
 }
-
 void insertAVL(AVL*& root, Book data)
 {
     byID(root, data);
     balance(root);
 }
-AVL* readFileAVL(string info)
-{
-    ifstream fi(info); //read file
-    AVL* root = NULL;
-    Book book; //board card
-    string temp;
-    string line;
-    getline(fi, line); // bo dong dau tien
-
-    while (!fi.eof())
-    {
-        getline(fi, line);
-        if (line == "")
-        {
-            break;
-        }
-        stringstream ss(line);// doc tung dong
-
-        //read tung word truoc dau ;
-        getline(ss, temp, ',');
-        book.id = temp;
-
-        getline(ss, temp, ',');//break ',' of title
-        if (temp[0] == '"')
-        {
-            while (temp[temp.length() - 1] != '"')
-            {
-                book.title = temp + ',';
-                getline(ss, temp, ',');
-            };
-            if (temp[temp.length() - 1] == '"')
-                book.title = temp;
-        }
-        else
-            book.title = temp;
-
-        getline(ss, temp, ',');
-        book.price = temp;
-
-        getline(ss, temp, ',');
-        book.user_id = temp;
-
-        getline(ss, temp, ',');//break ',' of title
-        if (temp[0] == '"')
-        {
-            while (temp[temp.length() - 1] != '"')
-            {
-                book.profileName = temp + ',';
-                getline(ss, temp, ',');
-            };
-            if (temp[temp.length() - 1] == '"')
-                book.profileName = temp;
-        }
-        else
-            book.profileName = temp;
-
-        getline(ss, temp, ',');
-        book.helpfulness = temp;
-
-        getline(ss, temp, ',');
-        book.score = temp;
-
-        getline(ss, temp, ',');
-        book.time = temp;
-
-        getline(ss, temp, ',');
-        if (temp[0] == '"')
-        {
-            while (temp[temp.length() - 1] != '"')
-            {
-                book.summary = temp + ',';
-                getline(ss, temp, ',');
-            };
-            if (temp[temp.length() - 1] == '"')
-                book.summary = temp;
-        }
-        else
-            book.summary = temp;
-
-        getline(ss, temp, ',');
-        if (temp[0] == '"')
-        {
-            while ((temp[temp.length() - 1] != '"') || (temp == ""))
-            {
-                book.text = temp + ',';
-                getline(ss, temp, ',');
-                if (temp == "")
-                {
-                    book.text = temp + ',';
-                    getline(ss, temp, ',');
-                }
-            };
-            if (temp[temp.length() - 1] == '"')
-                book.text = temp;
-        }
-        else
-            book.text = temp;
-        //Insert
-        insertAVL(root, book);
-    }
-    fi.close();
-    return root;
-}
 void LNR(ofstream& fo, AVL* root)
 {
     if (root == NULL)
+    {
         return;
+    }
     LNR(fo, root->left);
-    fo << root->book.id << ","
-        << root->book.title << ","
-        << root->book.price << ","
-        << root->book.user_id << ","
-        << root->book.profileName << ","
-        << root->book.helpfulness << ","
-        << root->book.score << ","
-        << root->book.time << ","
-        << root->book.summary << ","
-        << root->book.text << "," << endl << endl;
+    for (auto x : root->book)
+        fo << x.id << ","
+        << x.title << ","
+        << x.price << ","
+        << x.user_id << ","
+        << x.profileName << ","
+        << x.helpfulness << ","
+        << x.score << ","
+        << x.time << ","
+        << x.summary << ","
+        << x.text << endl;
     LNR(fo, root->right);
+    delete root;
 }
 void writeFile(string info, AVL* root)
 {
     ofstream fo(info);
+    if (fo.fail() == true)
+    {
+        cout << "Cant open file" << endl;
+        exit(1);
+    }
     if (root == NULL)
         return;
     LNR(fo, root);
     fo.close();
+}
+void externalSort(string fi, string fo, int size)
+{
+    ifstream in(fi);
+    string temp;
+    string line;
+    getline(in, line); // bo dong dau tien
+    int count = 0;
+    while (!in.eof())
+    {
+        int number = 0;
+        AVL* root = NULL;
+        for (int i = 0; i < size; i++)
+        {
+            Book book;
+            getline(in, line);
+            if (line == "")
+            {
+                break;
+            }
+            stringstream ss(line);// doc tung dong
+            getline(ss, temp, ',');
+            book.id = temp;
+
+            getline(ss, temp, ',');//break ',' of title
+            if (temp[0] == '"')
+            {
+                book.title = "";
+                while (temp[temp.length() - 1] != '"')
+                {
+                    book.title += temp + ',';
+                    getline(ss, temp, ',');
+                };
+                if (temp[temp.length() - 1] == '"')
+                    book.title += temp;
+            }
+            else
+                book.title = temp;
+
+            getline(ss, temp, ',');
+            book.price = temp;
+
+            getline(ss, temp, ',');
+            book.user_id = temp;
+
+            getline(ss, temp, ',');//break ',' of title
+            if (temp[0] == '"')
+            {
+                book.profileName = "";
+                while (temp[temp.length() - 1] != '"')
+                {
+                    book.profileName += temp + ',';
+                    getline(ss, temp, ',');
+                };
+                if (temp[temp.length() - 1] == '"')
+                    book.profileName += temp;
+            }
+            else
+                book.profileName = temp;
+
+            getline(ss, temp, ',');
+            book.helpfulness = temp;
+
+            getline(ss, temp, ',');
+            book.score = temp;
+
+            getline(ss, temp, ',');
+            book.time = temp;
+
+            getline(ss, temp, ',');//break ',' of title
+            if (temp[0] == '"')
+            {
+                book.summary = "";
+                while (temp[temp.length() - 1] != '"')
+                {
+                    book.summary += temp + ',';
+                    getline(ss, temp, ',');
+                };
+                if (temp[temp.length() - 1] == '"')
+                    book.summary += temp;
+            }
+            else
+                book.summary = temp;
+
+            getline(ss, temp, ',');//break ',' of title
+            if (temp[0] == '"')
+            {
+                book.text = "";
+                while (temp[temp.length() - 1] != '"')
+                {
+                    book.text += temp + ',';
+                    getline(ss, temp, ',');
+                    if (temp == "")
+                    {
+                        book.text = temp + ',';
+                        getline(ss, temp, ',');
+                    }
+                };
+                if (temp[temp.length() - 1] == '"')
+                    book.text += temp;
+            }
+            else
+                book.text = temp;
+            //Insert
+            insertAVL(root, book);
+            cout << number++ << endl;
+        }
+        writeFile("/Users/henry/Downloads/sorted_count/sorted" + to_string(count) + ".csv", root);
+        count++;
+    }
+    in.close();
 }

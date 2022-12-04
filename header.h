@@ -12,11 +12,12 @@ struct Book {
 };
 
 struct AVL {
-    //int data;
-    Book book;
+    vector<Book> book;
     AVL* left;
     AVL* right;
 };
+
+
 
 
 
