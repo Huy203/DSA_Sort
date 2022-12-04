@@ -194,6 +194,11 @@ void externalSort(string fi, string fo, int size)
                 {
                     book.summary += temp + ',';
                     getline(ss, temp, ',');
+                    while (temp == "")
+                    {
+                        book.summary += temp + ',';
+                        getline(ss, temp, ',');
+                    }
                 };
                 if (temp[temp.length() - 1] == '"')
                     book.summary += temp;
@@ -209,9 +214,9 @@ void externalSort(string fi, string fo, int size)
                 {
                     book.text += temp + ',';
                     getline(ss, temp, ',');
-                    if (temp == "")
+                    while (temp == "")
                     {
-                        book.text = temp + ',';
+                        book.text += temp + ',';
                         getline(ss, temp, ',');
                     }
                 };
@@ -224,7 +229,7 @@ void externalSort(string fi, string fo, int size)
             insertAVL(root, book);
             cout << number++ << endl;
         }
-        writeFile("/Users/henry/Downloads/sorted_count/sorted" + to_string(count) + ".csv", root);
+        writeFile("temp/sorted" + to_string(count) + ".csv", root);
         count++;
     }
     in.close();

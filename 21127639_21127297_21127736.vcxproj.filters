@@ -27,9 +27,4 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="\\Mac\Home\Downloads\Books_rating.csv">
-      <Filter>Source Files</Filter>
-    </None>
-  </ItemGroup>
 </Project>
