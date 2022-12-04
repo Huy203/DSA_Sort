@@ -103,7 +103,7 @@ void LNR(ofstream& fo, AVL* root)
         << x.summary << ","
         << x.text << endl;
     LNR(fo, root->right);
-    delete root;
+   // delete root;
 }
 void writeFile(string info, AVL* root)
 {
@@ -120,14 +120,15 @@ void writeFile(string info, AVL* root)
 }
 void externalSort(string fi, string fo, int size)
 {
-    ifstream in(fi);
+    ifstream in;
+    in.open(fi, ios::binary);
     string temp;
     string line;
     getline(in, line); // bo dong dau tien
-    int count = 0;
-    while (!in.eof())
+    int count = 0,number=0;
+    while (in)
     {
-        int number = 0;
+        //int number = 0;
         AVL* root = NULL;
         for (int i = 0; i < size; i++)
         {
@@ -170,6 +171,11 @@ void externalSort(string fi, string fo, int size)
                 {
                     book.profileName += temp + ',';
                     getline(ss, temp, ',');
+                    while (temp == "")
+                    {
+                        book.profileName += temp + ',';
+                        getline(ss, temp, ',');
+                    }
                 };
                 if (temp[temp.length() - 1] == '"')
                     book.profileName += temp;
@@ -232,5 +238,5 @@ void externalSort(string fi, string fo, int size)
         writeFile("temp/sorted" + to_string(count) + ".csv", root);
         count++;
     }
-    in.close();
+    //in.close();
 }
