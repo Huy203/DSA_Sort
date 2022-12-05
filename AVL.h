@@ -145,19 +145,31 @@ void joinFile(string input, string output, int num, int size)
         int j;
         for (j = 0; j < size; j++)
         {
-            getline(in, line, '\n');
+            getline(in, line, ';');
             if (line == "\n")
             {
                 break;
             }
             else
             {
-                writedF << line;
+                writedF << line << ";";
             }
         }
 
         in.close();
     }
+}
+void RemoveTempFile(string input, int num)
+{
+    for (int i = 0; i < num; i++)
+    {
+        stringstream s;
+        s << input << to_string(i) << ".csv";
+        if(remove(s.str().c_str()))
+        {
+            cout << "Remove" << s.str() << "failed" << endl;
+        }
+    }   
 }
 void externalSort(string fi, string fo, int size)
 {
