@@ -145,8 +145,8 @@ void joinFile(string input, string output, int num, int size)
         int j;
         for (j = 0; j < size; j++)
         {
-            getline(in, line, ';');
-            if (line == "\n")
+            getline(in, line);
+            if (line == ";")
             {
                 break;
             }
@@ -154,6 +154,7 @@ void joinFile(string input, string output, int num, int size)
             {
                 writedF << line << ";";
             }
+            writedF << endl;
         }
 
         in.close();
