@@ -84,7 +84,6 @@ void insertAVL(AVL*& root, Book data)
     byID(root, data);
     balance(root);
 }
-
 void LNR(ofstream& fo, AVL* root)
 {
     if (root == NULL)
@@ -93,7 +92,16 @@ void LNR(ofstream& fo, AVL* root)
     }
     LNR(fo, root->left);
     for (auto x : root->book)
-        fo << x;
+        fo << x.id << ","
+        << x.title << ","
+        << x.price << ","
+        << x.user_id << ","
+        << x.profileName << ","
+        << x.helpfulness << ","
+        << x.score << ","
+        << x.time << ","
+        << x.summary << ","
+        << x.text << endl;
     LNR(fo, root->right);
     delete root;
 }
@@ -110,22 +118,160 @@ void writeFile(string info, AVL* root)
     LNR(fo, root);
     fo.close();
 }
-
-int externalSort(string fi, string fo, int size)
+void joinFile(string input, string output, int num, int size)
 {
-    ifstream in(fi);
+    ofstream writedF;
+    ifstream in;
+    string line;
+    Book book;
+    string temp;
+    writedF.open(output);
+    if (writedF.fail())
+    {
+        cout << "Wr";
+        return;
+    }
+    for (int i = 0; i < num; i++)
+    {
+        cout << i << endl;
+        int a = pow(2, 10);
+        string namefile = input + to_string(i) + ".csv";
+        in.open(namefile);
+        if (in.fail())
+        {
+            cout << "In" << i;
+            return;
+        }
+        int j;
+        for (j = 0; j < size; j++)
+        {
+            getline(in, line, '\n');
+            if (line == "\n")
+            {
+                break;
+            }
+            else
+            {
+                writedF << line;
+            }
+        }
+
+        in.close();
+    }
+}
+void externalSort(string fi, string fo, int size)
+{
+    ifstream in;
+    in.open(fi, ios::binary);
     string temp;
     string line;
     getline(in, line); // bo dong dau tien
-    int count = 0;
-    while (!in.eof())
+    int count = 0,number=0;
+    while (in)
     {
-        int number = 0;
+        //int number = 0;
         AVL* root = NULL;
         for (int i = 0; i < size; i++)
         {
             Book book;
-            in >> book;
+            getline(in, line);
+            if (line == "")
+            {
+                break;
+            }
+            stringstream ss(line);// doc tung dong
+            getline(ss, temp, ',');
+            book.id = temp;
+
+            getline(ss, temp, ',');//break ',' of title
+            if (temp[0] == '"')
+            {
+                book.title = "";
+                while (temp[temp.length() - 1] != '"')
+                {
+                    book.title += temp + ',';
+                    getline(ss, temp, ',');
+                };
+                if (temp[temp.length() - 1] == '"')
+                    book.title += temp;
+            }
+            else
+                book.title = temp;
+
+            getline(ss, temp, ',');
+            book.price = temp;
+
+            getline(ss, temp, ',');
+            book.user_id = temp;
+
+            getline(ss, temp, ',');//break ',' of title
+            if (temp[0] == '"')
+            {
+                book.profileName = "";
+                while (temp[temp.length() - 1] != '"')
+                {
+                    book.profileName += temp + ',';
+                    getline(ss, temp, ',');
+                    while (temp == "")
+                    {
+                        book.profileName += temp + ',';
+                        getline(ss, temp, ',');
+                    }
+                };
+                if (temp[temp.length() - 1] == '"')
+                    book.profileName += temp;
+            }
+            else
+                book.profileName = temp;
+
+            getline(ss, temp, ',');
+            book.helpfulness = temp;
+
+            getline(ss, temp, ',');
+            book.score = temp;
+
+            getline(ss, temp, ',');
+            book.time = temp;
+
+            getline(ss, temp, ',');//break ',' of title
+            if (temp[0] == '"')
+            {
+                book.summary = "";
+                while (temp[temp.length() - 1] != '"')
+                {
+                    book.summary += temp + ',';
+                    getline(ss, temp, ',');
+                    while (temp == "")
+                    {
+                        book.summary += temp + ',';
+                        getline(ss, temp, ',');
+                    }
+                };
+                if (temp[temp.length() - 1] == '"')
+                    book.summary += temp;
+            }
+            else
+                book.summary = temp;
+
+            getline(ss, temp, ',');//break ',' of title
+            if (temp[0] == '"')
+            {
+                book.text = "";
+                while (temp[temp.length() - 1] != '"')
+                {
+                    book.text += temp + ',';
+                    getline(ss, temp, ',');
+                    while (temp == "")
+                    {
+                        book.text += temp + ',';
+                        getline(ss, temp, ',');
+                    }
+                };
+                if (temp[temp.length() - 1] == '"')
+                    book.text += temp;
+            }
+            else
+                book.text = temp;
             //Insert
             insertAVL(root, book);
             cout << number++ << endl;
@@ -133,6 +279,6 @@ int externalSort(string fi, string fo, int size)
         writeFile("temp/sorted" + to_string(count) + ".csv", root);
         count++;
     }
-    return count;
-    // in.close();
+    in.close();
 }
+
