@@ -15,11 +15,14 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="merge.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="AVL.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -16,7 +16,126 @@ struct AVL {
     AVL* left;
     AVL* right;
 };
+struct FirstNode
+{
+    Book book;
+    int element;
+};
+ifstream& operator>>(ifstream& in, Book& book)
+{
+    string temp, line;
+    getline(in, line);
 
+    if (line == "")
+    {
+        return in;
+    }
+    stringstream ss(line);// doc tung dong
+    getline(ss, temp, ',');
+    book.id = temp;
+
+    getline(ss, temp, ',');//break ',' of title
+    if (temp[0] == '"')
+    {
+        book.title = "";
+        while (temp[temp.length() - 1] != '"')
+        {
+            book.title += temp + ',';
+            getline(ss, temp, ',');
+        };
+        if (temp[temp.length() - 1] == '"')
+            book.title += temp;
+    }
+    else
+        book.title = temp;
+
+    getline(ss, temp, ',');
+    book.price = temp;
+
+    getline(ss, temp, ',');
+    book.user_id = temp;
+
+    getline(ss, temp, ',');//break ',' of title
+    if (temp[0] == '"')
+    {
+        book.profileName = "";
+        while (temp[temp.length() - 1] != '"')
+        {
+            book.profileName += temp + ',';
+            getline(ss, temp, ',');
+        };
+        if (temp[temp.length() - 1] == '"')
+            book.profileName += temp;
+    }
+    else
+        book.profileName = temp;
+
+    getline(ss, temp, ',');
+    book.helpfulness = temp;
+
+    getline(ss, temp, ',');
+    book.score = temp;
+
+    getline(ss, temp, ',');
+    book.time = temp;
+
+    getline(ss, temp, ',');//break ',' of title
+    if (temp[0] == '"')
+    {
+        book.summary = "";
+        while (temp[temp.length() - 1] != '"')
+        {
+            book.summary += temp + ',';
+            getline(ss, temp, ',');
+            while (temp == "")
+            {
+                book.summary += temp + ',';
+                getline(ss, temp, ',');
+            }
+        };
+        if (temp[temp.length() - 1] == '"')
+            book.summary += temp;
+    }
+    else
+        book.summary = temp;
+
+    getline(ss, temp, ',');//break ',' of title
+    if (temp[0] == '"')
+    {
+        book.text = "";
+        while (temp[temp.length() - 1] != '"')
+        {
+            book.text += temp + ',';
+            getline(ss, temp, ',');
+            while (temp == "")
+            {
+                book.text += temp + ',';
+                getline(ss, temp, ',');
+            }
+        };
+        if (temp[temp.length() - 1] == '"')
+            book.text += temp;
+    }
+    else
+        book.text = temp;
+    return in;
+}
+ofstream& operator<<(ofstream& out, const Book book)
+{
+    if (book.id == "")
+        return out;
+    out << book.id << ","
+        << book.title << ","
+        << book.price << ","
+        << book.user_id << ","
+        << book.profileName << ","
+        << book.helpfulness << ","
+        << book.score << ","
+        << book.time << ","
+        << book.summary << ","
+        << book.text << endl;
+    return out;
+}
 
 
 

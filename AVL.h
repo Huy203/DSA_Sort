@@ -84,6 +84,7 @@ void insertAVL(AVL*& root, Book data)
     byID(root, data);
     balance(root);
 }
+
 void LNR(ofstream& fo, AVL* root)
 {
     if (root == NULL)
@@ -92,18 +93,9 @@ void LNR(ofstream& fo, AVL* root)
     }
     LNR(fo, root->left);
     for (auto x : root->book)
-        fo << x.id << ","
-        << x.title << ","
-        << x.price << ","
-        << x.user_id << ","
-        << x.profileName << ","
-        << x.helpfulness << ","
-        << x.score << ","
-        << x.time << ","
-        << x.summary << ","
-        << x.text << endl;
+        fo << x;
     LNR(fo, root->right);
-   // delete root;
+    delete root;
 }
 void writeFile(string info, AVL* root)
 {
@@ -118,119 +110,22 @@ void writeFile(string info, AVL* root)
     LNR(fo, root);
     fo.close();
 }
-void externalSort(string fi, string fo, int size)
+
+int externalSort(string fi, string fo, int size)
 {
-    ifstream in;
-    in.open(fi, ios::binary);
+    ifstream in(fi);
     string temp;
     string line;
     getline(in, line); // bo dong dau tien
-    int count = 0,number=0;
-    while (in)
+    int count = 0;
+    while (!in.eof())
     {
-        //int number = 0;
+        int number = 0;
         AVL* root = NULL;
         for (int i = 0; i < size; i++)
         {
             Book book;
-            getline(in, line);
-            if (line == "")
-            {
-                break;
-            }
-            stringstream ss(line);// doc tung dong
-            getline(ss, temp, ',');
-            book.id = temp;
-
-            getline(ss, temp, ',');//break ',' of title
-            if (temp[0] == '"')
-            {
-                book.title = "";
-                while (temp[temp.length() - 1] != '"')
-                {
-                    book.title += temp + ',';
-                    getline(ss, temp, ',');
-                };
-                if (temp[temp.length() - 1] == '"')
-                    book.title += temp;
-            }
-            else
-                book.title = temp;
-
-            getline(ss, temp, ',');
-            book.price = temp;
-
-            getline(ss, temp, ',');
-            book.user_id = temp;
-
-            getline(ss, temp, ',');//break ',' of title
-            if (temp[0] == '"')
-            {
-                book.profileName = "";
-                while (temp[temp.length() - 1] != '"')
-                {
-                    book.profileName += temp + ',';
-                    getline(ss, temp, ',');
-                    while (temp == "")
-                    {
-                        book.profileName += temp + ',';
-                        getline(ss, temp, ',');
-                    }
-                };
-                if (temp[temp.length() - 1] == '"')
-                    book.profileName += temp;
-            }
-            else
-                book.profileName = temp;
-
-            getline(ss, temp, ',');
-            book.helpfulness = temp;
-
-            getline(ss, temp, ',');
-            book.score = temp;
-
-            getline(ss, temp, ',');
-            book.time = temp;
-
-            getline(ss, temp, ',');//break ',' of title
-            if (temp[0] == '"')
-            {
-                book.summary = "";
-                while (temp[temp.length() - 1] != '"')
-                {
-                    book.summary += temp + ',';
-                    getline(ss, temp, ',');
-                    while (temp == "")
-                    {
-                        book.summary += temp + ',';
-                        getline(ss, temp, ',');
-                    }
-                };
-                if (temp[temp.length() - 1] == '"')
-                    book.summary += temp;
-            }
-            else
-                book.summary = temp;
-
-            getline(ss, temp, ',');//break ',' of title
-            if (temp[0] == '"')
-            {
-                book.text = "";
-                while (temp[temp.length() - 1] != '"')
-                {
-                    book.text += temp + ',';
-                    getline(ss, temp, ',');
-                    while (temp == "")
-                    {
-                        book.text += temp + ',';
-                        getline(ss, temp, ',');
-                    }
-                };
-                if (temp[temp.length() - 1] == '"')
-                    book.text += temp;
-            }
-            else
-                book.text = temp;
+            in >> book;
             //Insert
             insertAVL(root, book);
             cout << number++ << endl;
@@ -238,5 +133,6 @@ void externalSort(string fi, string fo, int size)
         writeFile("temp/sorted" + to_string(count) + ".csv", root);
         count++;
     }
-    //in.close();
+    return count;
+    // in.close();
 }

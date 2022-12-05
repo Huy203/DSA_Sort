@@ -1,9 +1,10 @@
-#include"AVL.h"
+#include"merge.h"
 int main()
 {
     string fileInput = "Books_rating.csv";
     string fileOutput = "sorted_books_rating.csv";
     int size = pow(2, 15);
-    externalSort(fileInput, fileOutput, size);
+    int count = externalSort(fileInput, fileOutput, size);
+    mergeFile(fileOutput, count);
     return 0;
 }

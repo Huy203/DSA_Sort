@@ -184,6 +184,7 @@
   <ItemGroup>
     <ClInclude Include="AVL.h" />
     <ClInclude Include="header.h" />
+    <ClInclude Include="merge.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp" />
