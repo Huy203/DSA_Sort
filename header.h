@@ -99,45 +99,10 @@ ifstream& operator>>(ifstream& in, Book& book)
     else
         book.summary = temp;
 
-    getline(ss, temp, ',');//break ',' of title
-    if (temp[0] == '"')
-    {
-        book.text = "";
-        while (temp[temp.length() - 1] != '"')
-        {
-            book.text += temp + ',';
-            getline(ss, temp, ',');
-            while (temp == "")
-            {
-                book.text += temp + ',';
-                getline(ss, temp, ',');
-            }
-        };
-        if (temp[temp.length() - 1] == '"')
-            book.text += temp;
-    }
-    else
-        book.text = temp;
+    getline(ss, temp);//break ',' of title
+    book.text = temp;
     return in;
 }
-ofstream& operator<<(ofstream& out, const Book book)
-{
-    if (book.id == "")
-        return out;
-    out << book.id << ","
-        << book.title << ","
-        << book.price << ","
-        << book.user_id << ","
-        << book.profileName << ","
-        << book.helpfulness << ","
-        << book.score << ","
-        << book.time << ","
-        << book.summary << ","
-        << book.text << endl;
-    return out;
-}
-
-
 
 
 
