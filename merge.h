@@ -1,23 +1,21 @@
 #pragma once
 #include"AVL.h"
-void merge(FirstNode arr[], int l, int r)
+void merge(FirstNode arr[], int const left, int const mid, int const right)
 {
-    int k;
-    int m = l + (r - 1) / 2;
-    int n1 = m - l + 1;
-    int n2 = r - m;
+    int n = mid - left + 1;
+    int m = right - mid;
 
-    FirstNode L[n1], R[n2];
+    FirstNode* L = new FirstNode[n], * R = new FirstNode[m];
 
-    for (int i = 0; i < n1; i++)
-        L[i] = arr[l + i];
-    for (int j = 0; j < n2; j++)
-        R[j] = arr[m + 1 + j];
+    for (int i = 0; i < n; i++)
+        L[i] = arr[left + i];
+    for (int j = 0; j < m; j++)
+        R[j] = arr[mid + 1 + j];
 
-    int i = 0, j = 0;
-    k = l;
-    while (i < n1 && j < n2) {
-        if (L[i].book.id <= R[j].book.id) {
+    int i = 0, j = 0, k = left;
+
+    while (i < n && j < m) {
+        if (L[i].book.id.compare(R[j].book.id) <= 0) {
             arr[k] = L[i];
             i++;
         }
@@ -27,21 +25,33 @@ void merge(FirstNode arr[], int l, int r)
         }
         k++;
     }
-
-    while (i < n1) {
+    while (i < n) {
         arr[k] = L[i];
         i++;
         k++;
     }
-    while (j < n2) {
-        arr[k] = R[j];
+    while (j < m) {
+        arr[k]
+            = R[j];
         j++;
         k++;
     }
+    delete[] L;
+    delete[] R;
 }
-void mergeFile(string fo, int count)
+void mergeSort(FirstNode arr[], int const left, int const right)
 {
-    ifstream in[count];
+    if (left >= right)
+        return;
+
+    auto mid = left + (right - left) / 2;
+    mergeSort(arr, left, mid);
+    mergeSort(arr, mid + 1, right);
+    merge(arr, left, mid, right);
+}
+void MergeFile(string fo, int count)
+{
+    ifstream* in = new ifstream[count];
     for (int i = 0; i < count; i++)
     {
         in[i].open("temp/sorted" + to_string(i) + ".csv");
@@ -53,7 +63,7 @@ void mergeFile(string fo, int count)
     }
     ofstream out(fo);
     out << "Id,Title,Price,User_id,profileName,review/helpfulness,review/score,review/time,review/summary,review/text" << endl;
-    FirstNode temp[count];
+    FirstNode* temp = new FirstNode[count];
     int number = 0;
     for (int i = 0; i < count; i++)
     {
@@ -61,45 +71,45 @@ void mergeFile(string fo, int count)
         temp[i].element = i;
     }
     do {
-        merge(temp, 0, count - 1);
-        for (int i = 0; i < count; i++)
+        mergeSort(temp, 0, count - 1);
+        Book temporary;
+        if (!in[temp[0].element].eof())
         {
-            Book temporary;
-            if (!in[temp[i].element].eof())
+            while (!in[temp[0].element].eof())
             {
-                while (!in[temp[i].element].eof())
+                out << temp[0].book.id << ","
+                    << temp[0].book.title << ","
+                    << temp[0].book.price << ","
+                    << temp[0].book.user_id << ","
+                    << temp[0].book.profileName << ","
+                    << temp[0].book.helpfulness << ","
+                    << temp[0].book.score << ","
+                    << temp[0].book.time << ","
+                    << temp[0].book.summary << ","
+                    << temp[0].book.text << endl;
+                in[temp[0].element] >> temporary;
+                if (temporary.id == temp[0].book.id)
                 {
-                    if (i == 0)
-                    {
-                        cout << number++ << endl;
-                        out << temp[i].book;
-                        in[temp[i].element] >> temporary;
-                        if (temporary.id == temp[i].book.id)
-                        {
-                            //vtBook[i].push_back(temporary);
-                            temp[i].book = temporary;
-                            continue;
-                        }
-                        else
-                        {
-                            temp[i].book = temporary;
-                            break;
-                        }
-                    }
+                    temp[0].book = temporary;
+                    continue;
+                }
+                else
+                {
+                    if (temporary.id != "")
+                        temp[0].book = temporary;
                     break;
                 }
-                if (in[temp[i].element].eof() == true)
+            }
+            if (in[temp[0].element].eof() == true)
+            {
+                in[temp[0].element].close();
+                for (int k = 0; k < count - 1; k++)
                 {
-                    for (int k = i; k < count - 1; k++)
-                    {
-                        temp[k] = temp[k + 1];
-                    }
-                    in[temp[i].element].close();
-                    count--;
+                    temp[k] = temp[k + 1];
                 }
+                count--;
             }
         }
     } while (count != 0);
     out.close();
 }
-
