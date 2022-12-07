@@ -118,68 +118,15 @@ void writeFile(string info, AVL* root)
     LNR(fo, root);
     fo.close();
 }
-void joinFile(string input, string output, int num, int size)
-{
-    ofstream writedF;
-    ifstream in;
-    string line;
-    Book book;
-    string temp;
-    writedF.open(output);
-    if (writedF.fail())
-    {
-        cout << "Wr";
-        return;
-    }
-    for (int i = 0; i < num; i++)
-    {
-        cout << i << endl;
-        int a = pow(2, 10);
-        string namefile = input + to_string(i) + ".csv";
-        in.open(namefile);
-        if (in.fail())
-        {
-            cout << "In" << i;
-            return;
-        }
-        int j;
-        for (j = 0; j < size; j++)
-        {
-            getline(in, line);
-            if (line == ";")
-            {
-                break;
-            }
-            else
-            {
-                writedF << line << ";";
-            }
-            writedF << endl;
-        }
 
-        in.close();
-    }
-}
-void RemoveTempFile(string input, int num)
+int externalSort(string fi, string fo, int size)
 {
-    for (int i = 0; i < num; i++)
-    {
-        stringstream s;
-        s << input << to_string(i) << ".csv";
-        if(remove(s.str().c_str()))
-        {
-            cout << "Remove" << s.str() << "failed" << endl;
-        }
-    }   
-}
-void externalSort(string fi, string fo, int size)
-{
-    ifstream in;
+     ifstream in;
     in.open(fi, ios::binary);
     string temp;
     string line;
     getline(in, line); // bo dong dau tien
-    int count = 0,number=0;
+    int count = 0, number = 0;
     while (in)
     {
         //int number = 0;
@@ -265,26 +212,8 @@ void externalSort(string fi, string fo, int size)
             }
             else
                 book.summary = temp;
-
-            getline(ss, temp, ',');//break ',' of title
-            if (temp[0] == '"')
-            {
-                book.text = "";
-                while (temp[temp.length() - 1] != '"')
-                {
-                    book.text += temp + ',';
-                    getline(ss, temp, ',');
-                    while (temp == "")
-                    {
-                        book.text += temp + ',';
-                        getline(ss, temp, ',');
-                    }
-                };
-                if (temp[temp.length() - 1] == '"')
-                    book.text += temp;
-            }
-            else
-                book.text = temp;
+            getline(ss, temp);//break ',' of title
+            book.text = temp;
             //Insert
             insertAVL(root, book);
             cout << number++ << endl;
@@ -293,5 +222,6 @@ void externalSort(string fi, string fo, int size)
         count++;
     }
     in.close();
+    return count;
 }
 
