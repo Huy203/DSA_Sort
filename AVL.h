@@ -118,7 +118,18 @@ void writeFile(string info, AVL* root)
     LNR(fo, root);
     fo.close();
 }
-
+void RemoveTempFile(string input, int num)
+{
+    for (int i = 0; i < num; i++)
+    {
+        stringstream s;
+        s << input << to_string(i) << ".csv";
+        if (remove(s.str().c_str()))
+        {
+            cout << "Remove" << s.str() << "failed" << endl;
+        }
+    }
+}
 int externalSort(string fi, string fo, int size)
 {
      ifstream in;
